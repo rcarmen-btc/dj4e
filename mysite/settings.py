@@ -31,6 +31,9 @@ ALLOWED_HOSTS = ['riser.pythonanywhere.com',]
 # Application definition
 
 INSTALLED_APPS = [
+    'autos.apps.AutosConfig',
+    'hello',
+    'home',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',

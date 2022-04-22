@@ -16,13 +16,16 @@ def detail(request, question_id):
 
 
 def results(request, question_id):
-    response = "You're looking at the results of question %s."
-    return HttpResponse(response % question_id)
+    response = """
+    
+    You're looking at the results of question %s."""
+    return render(request, 'polls/res.html')
+   # return HttpResponse(response % question_id)
 
 
 def vote(request, question_id):
-    return HttpResponse("You're voting on question %s." % question_id)
+    return render(request, 'polls/res.html')
 
 
 def owner(request):
-    return HttpResponse("Hello, world. 496ad113 is the polls index.")
+    return HttpResponse("Hello, 12c7c68e world. 496ad113 is the polls index.")
