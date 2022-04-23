@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from autos.models import Makes, Autos
 from autos.forms import MakeForm
 
+
 class AutosList(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -21,8 +22,6 @@ class AutosList(LoginRequiredMixin, View):
         }
         return render(request, 'autos_list.html', context);
         
-
-
 
 class MakesList(LoginRequiredMixin, View):
 
@@ -54,7 +53,6 @@ class MakesCreate(LoginRequiredMixin, View):
         return redirect(reverse_lazy('autos:autos_list'))
 
 
-
 class MakesUpdate(LoginRequiredMixin, View):
 
     def get(self, request, pk):
@@ -73,6 +71,7 @@ class MakesUpdate(LoginRequiredMixin, View):
             return render(request, 'autos/make_form.html', ctx)
         make = form.save()
         return redirect(reverse_lazy('autos:autos_list'))
+
 
 class MakesDelete(LoginRequiredMixin, View):
 
@@ -100,6 +99,7 @@ class AutoUpdate(LoginRequiredMixin, UpdateView):
         model = Autos
         fields = '__all__'
         success_url = reverse_lazy('autos:autos_list')
+
 
 class AutoDelete(LoginRequiredMixin, DeleteView):
         model = Autos
