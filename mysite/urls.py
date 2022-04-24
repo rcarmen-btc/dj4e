@@ -24,5 +24,6 @@ urlpatterns = [
     path('polls/', include('polls.urls'), name='polls'),
     path('hello/', include('hello.urls'), name='hello'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('cats/', include('cats.urls'), name='cats'),
     path('', TemplateView.as_view(template_name='home/main.html')),
 ]
