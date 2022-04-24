@@ -17,7 +17,7 @@ class AdDetailView(OwnerDetailView):
 class AdCreateView(OwnerCreateView):
     model = Ad
     # List the fields to copy from the Article model to the Article form
-    fields = ['title', 'text']
+    fields = ['title', 'text', 'price']
 
 
 class AdUpdateView(OwnerUpdateView):
