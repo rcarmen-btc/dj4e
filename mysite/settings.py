@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',  
 
     #my
-    # 'ads.apps.AdsConfig'
+    'ads.apps.AdsConfig'
 ]
 
 # When we get to crispy forms :)
@@ -91,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dj4e-samples.wsgi.application'
+# WSGI_APPLICATION = 'dj4e-samples.wsgi.application'
 
 
 # Database
