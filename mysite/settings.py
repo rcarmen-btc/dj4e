@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'taggit',
     'home.apps.HomeConfig',  
 
-    #my
+    # my
     'ads.apps.AdsConfig'
 ]
 
