@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',  
 
     #my
-    'ads.apps.AdsConfig'
+    'ads.apps.AdsConfig',
+    'unesco.apps.UnescoConfig',
 ]
 
 # When we get to crispy forms :)
