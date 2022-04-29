@@ -37,7 +37,17 @@
 </p>
 
 {% for comm in comments %}
-    {{ comm }}
+    {{ comm.text }}
+    <br>
 {% endfor %}
+
+{% load crispy_forms_tags %}
+
+<form action="{% url 'ads:ad_comment_create' ad.id %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'ads:all' %}';return false;">
+  </form>
 
 {% endblock %}

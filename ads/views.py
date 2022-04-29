@@ -5,15 +5,60 @@ from django.urls import path, reverse_lazy, reverse
 from django.views import View
 
 from ads.owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
-from ads.models import Ad, Comment
-from ads.forms import CreateForm
+from ads.models import Ad, Comment, Fav
+from ads.forms import CreateForm, CommentForm
 
 
 class AdListView(OwnerListView):
     model = Ad
     # By convention:
-    # template_name = "myarts/ad_list.html"
+    template_name = "ads/ad_list.html"
+    def get(self, request) :
 
+        try:
+            ad = Ad.objects.filter(title__startswith=request.GET['search'])
+        except:
+            ad = Ad.objects.all()
+
+        # ad = Ad.objects.filter()
+        favorites = list()
+        if request.user.is_authenticated:
+            # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
+            rows = request.user.favorite_ads.values('id')
+            # favorites = [2, 4, ...] using list comprehension
+            favorites = [ row['id'] for row in rows ]
+        ctx = {'ad_list' : ad, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
+
+        
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Add PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad=t)
+        try:
+            fav.save()  # In case of duplicate key
+        except IntegrityError as e:
+            pass
+        return HttpResponse()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Delete PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        try:
+            fav = Fav.objects.get(user=request.user, ad=t).delete()
+        except Fav.DoesNotExist as e:
+            pass
+
+        return HttpResponse()
 
 class CommentCreateView(LoginRequiredMixin, View):
 
@@ -32,12 +77,18 @@ class CommentDeleteView(OwnerDeleteView):
 class AdDetailView(OwnerDetailView):
 
     model = Ad
+    template_name = 'ads/ad_detail.html'
 
-    def get_context_data(self, **kwargs):
-        comments = Comment.objects.filter(ad=kwargs['object']).order_by('-updated_at')
-        context = super().get_context_data(**kwargs)
-        context['comments'] = comments
-        return context
+    def get(self, request, pk=None):
+        form = CommentForm()
+        ad = Ad.objects.get(pk=pk)
+        comments = Comment.objects.filter(ad=ad).order_by('-updated_at')
+        ctx = {
+            'form': form,
+            'ad': ad,
+            'comments': comments
+        }
+        return render(request, self.template_name, ctx)
 
 
 class AdCreateView(OwnerCreateView):
@@ -65,6 +116,8 @@ class AdCreateView(OwnerCreateView):
         pic = form.save(commit=False)
         pic.owner = self.request.user
         pic.save()
+
+        form.save_m2m() 
         return redirect(self.success_url)
 
 
@@ -77,6 +130,15 @@ class AdUpdateView(OwnerUpdateView):
 
 class AdDeleteView(OwnerDeleteView):
     model = Ad
+
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        f = get_object_or_404(Ad, id=pk)
+        comment = Comment(text=request.POST['comment'], owner=request.user, ad=f)
+        comment.save()
+        return redirect(reverse('ads:ad_detail', args=[pk]))
+
 
 
 def stream_file(request, pk):
